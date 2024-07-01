@@ -1,7 +1,8 @@
-produtos = {'Caderno':[12.99,'Caderno Tilibra 10 matérias'],'Caneta':[1.99,'Caneta FaberCastel Azul'],'Lapis':[1.50,'Lapis FaberCastel HB'],'Dicionario':[19.99,'Dicionário Aurélio 2024'],'Borracha':[2.99,'Borracha FaberCastel branca']}
+produtos = {'Caderno':[12.99,'Caderno Tilibra 10 matérias', 10],'Caneta':[1.99,'Caneta FaberCastel Azul',10],'Lapis':[1.50,'Lapis FaberCastel HB',10],'Dicionario':[19.99,'Dicionário Aurélio 2024',10],'Borracha':[2.99,'Borracha FaberCastel branca',10]}
 carrinho = {}
 historico = {}
 numeroDeCompras = 0
+totalHistorico = 0
 
 usuarios = {'admin@admin.com':['admin','senha123']}
 
@@ -45,7 +46,7 @@ while True:
             subtotal = 0
             print("Catálogo de produtos: ")
             for i in produtos:
-                print(f"Produto: {i}\nPreço: R${produtos[i][0]:.2f}\nDescrição: {produtos[i][1]}")
+                print(f"Produto: {i}\nPreço: R${produtos[i][0]:.2f}\nDescrição: {produtos[i][1]}\nQuantidade: {produtos[i][2]}\n--------------")
                 
             while True:
                 c = input("Deseja adicionar algum produto ao carrinho (S/N)?: ")
@@ -56,16 +57,21 @@ while True:
                 if c == 'S':
                     p = input("Digite o nome do produto: ")
                     if p in produtos:
-                        carrinho[p] = [produtos[p][0],produtos[p][1]]
-                        print("Produto adicionado ao carrinho!")
+                        q = int(input("Digite a quantidade do produto que deseja: "))
+                        if q > produtos[p][2]:
+                            print("Quantidade indisponível, tente novamente!")
+                        else:
+                            carrinho[p] = [produtos[p][0],produtos[p][1],q]
+                            produtos[p][2] -= q
+                            print("Produto adicionado ao carrinho!")
                     else:
                         print("Produto não existe!")
 
         if b == '2':
             print("Seu carrinho de compras: ")
             for i in carrinho:
-                print(f"Produto: {i}\nPreço: R${carrinho[i][0]:.2f}\nDescrição: {carrinho[i][1]}")
-                subtotal += produtos[i][0]
+                print(f"Produto: {i}\nPreço: R${carrinho[i][0]:.2f}\nDescrição: {carrinho[i][1]}\nQuantidade: {carrinho[i][2]}")
+                subtotal += carrinho[i][0]*carrinho[i][2]
             
             print(f"Seu subtotal é de R${subtotal:.2f}")
             
@@ -90,7 +96,7 @@ while True:
         if b == '3':
             total = 0
             for i in carrinho:
-                total += carrinho[i][0]
+                total += carrinho[i][0]*carrinho[i][2]
             
             print(f"Total R${total:.2f}")
             pagamento = input("Forma de pagamento\n1 - Dinheiro\n2 - Cartão de crédito\n3 - PIX\n")
@@ -145,8 +151,11 @@ while True:
                 total2 = 0
                 print(f'Sua compra de número {i}')
                 for j in historico[i]:
-                    print(f'{j} por R$ {historico[i][j][0]:.2f}')
-                    total2 += historico[i][j][0]
-                print(f'Total da compra {i} R$ {total2:.2f}')
+                    print(f'{historico[i][j][2]} - {j} por R$ {historico[i][j][0]*historico[i][j][2]:.2f}')
+                    total2 += historico[i][j][0]*historico[i][j][2]
+                    totalHistorico += total2
+                print(f'Total da compra {i} R$ {total2:.2f}\n--------------------')
+            
+            print(f"Total de todas as compras R$ {totalHistorico:.2f}\n-----------")
                     
     break
